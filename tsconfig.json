@@ -1,0 +1,19 @@
+{
+  "include": ["src/**/*", "test/**/*"],
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "allowJs": false,
+    "lib": ["ESNext"],
+    "target": "ES2020",
+    "alwaysStrict": true,
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@test/*": ["./test/*"]
+    }
+  }
+}
