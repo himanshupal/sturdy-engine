@@ -1,8 +1,12 @@
+import { path as ffmpegPath } from "@ffmpeg-installer/ffmpeg";
 import "dotenv/config";
 import express from "express";
+import ffmpeg from "fluent-ffmpeg";
 
 import { authenticate } from "./middlewares";
 import routes from "./routes";
+
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 const app = express();
 const port = process.env.PORT || "8000";

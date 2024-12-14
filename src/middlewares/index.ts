@@ -1,1 +1,2 @@
-export { authenticate } from "./authentication";
+export * from "./authentication";
+export * from "./upload";

@@ -18,6 +18,9 @@ node_modules
 # Generated output
 build
 
+# Media files
+public
+
 # Environment variables
 .env
 !env.example
