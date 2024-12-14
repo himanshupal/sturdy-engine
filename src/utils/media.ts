@@ -1,5 +1,6 @@
 import { fileUploadDir } from "@/constants";
 import ffmpeg, { type FfprobeFormat } from "fluent-ffmpeg";
+import fs from "node:fs/promises";
 import path from "node:path";
 
 import { getRandomId } from ".";
@@ -13,6 +14,11 @@ export const getVideoMetadata = (filePath: string): Promise<FfprobeFormat> => {
   });
 };
 
+/**
+ * Get filesize of the video at the filepath provided
+ * @param Exact file path
+ * @returns Size in bytes
+ */
 export const getVideoSize = async (filePath: string): Promise<number> => {
   const { size } = await getVideoMetadata(filePath);
   if (!size) throw new Error("Failed to get video size ");
@@ -36,9 +42,33 @@ export const trimVideo = async (filePath: string, from: number, duration: number
     ffmpeg(filePath)
       .setStartTime(from)
       .duration(duration)
-      .output(newFilePath)
       .on("end", () => res(newFilePath))
       .on("error", (err) => rej(err))
-      .run();
+      .save(newFilePath);
+  });
+};
+
+export const mergeVideos = async (files: Array<string>): Promise<string> => {
+  const newFilePath = `${fileUploadDir}/${getRandomId(32)}${path.extname(files.at(0)!)}`;
+
+  const inputList = path.join(path.dirname(newFilePath), "__tmp");
+  await fs.writeFile(inputList, files.map((filePath) => `file '${filePath}'`).join("\n"));
+
+  return new Promise((resolve, reject) => {
+    ffmpeg(inputList)
+      .inputOption("-safe", "0")
+      .inputOption("-f", "concat")
+      .outputOption("-c", "copy")
+      .on("end", () => {
+        fs.rm(inputList).finally(() => {
+          resolve(newFilePath);
+        });
+      })
+      .on("error", (error) => {
+        fs.rm(inputList).finally(() => {
+          reject(error);
+        });
+      })
+      .save(newFilePath);
   });
 };
