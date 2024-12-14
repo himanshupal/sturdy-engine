@@ -15,7 +15,7 @@
     "start": "NODE_ENV=production node -r @swc-node/register src",
     "pre-commit": "lint-staged",
     "prepare": "yarn exec husky",
-    "test": "yarn exec jest"
+    "test": "NODE_ENV=test yarn exec jest --setupFiles=dotenv/config"
   },
   "dependencies": {
     "@prisma/client": "^6.0.1",
@@ -27,10 +27,8 @@
     "@swc-node/register": "^1.10.9",
     "@swc/core": "^1.10.1",
     "@trivago/prettier-plugin-sort-imports": "^5.2.0",
-    "@types/chai": "^5",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
-    "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.2",
     "@types/supertest": "^6.0.2",
     "dotenv": "^16.4.7",

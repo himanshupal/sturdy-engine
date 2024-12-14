@@ -1,5 +1,7 @@
+import "dotenv/config";
 import express from "express";
 
+import { authenticate } from "./middlewares";
 import routes from "./routes";
 
 const app = express();
@@ -11,7 +13,7 @@ app.use("/ping", (_, res) => {
 });
 
 // A namespace for API that may be helpful if we plan to upgrade in future
-app.use("/api/v1", routes);
+app.use("/api/v1", authenticate, routes);
 
 // Only execute the statement within when invoked as a module, i.e. via CLI
 if (require.main === module) {
