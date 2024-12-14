@@ -13,6 +13,7 @@ model Video {
   description String?
 
   // Video Metadata
+  fileName String // Provided by user
   filePath String
   size     Float
   duration Float

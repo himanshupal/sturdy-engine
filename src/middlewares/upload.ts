@@ -1,6 +1,8 @@
 import { fileUploadDir } from "@/constants";
+import { getRandomId } from "@/utils";
 import multer, { diskStorage } from "multer";
 import fs from "node:fs";
+import path from "node:path";
 
 /**
  * Middleware to accept file via POST requests
@@ -12,6 +14,9 @@ export const handleMediaUpload = (fieldName: string) => {
       destination(_req, _file, callback) {
         if (!fs.existsSync(fileUploadDir)) fs.mkdirSync(fileUploadDir, { recursive: true });
         callback(null, fileUploadDir);
+      },
+      filename(_req, { originalname }, callback) {
+        callback(null, `${getRandomId(32)}${path.extname(originalname)}`);
       },
     }),
     fileFilter(_req, file, callback) {

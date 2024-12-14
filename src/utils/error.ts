@@ -4,17 +4,19 @@ import { ZodError } from "zod";
 
 type ErrorData = {
   message: string;
-  description?: string;
+  description: string;
 };
 
 export class TxError extends Error {
   #statusCode: number;
-  #data: ErrorData;
+  #data: string | ErrorData;
 
-  constructor(data: ErrorData, statusCode: number) {
-    super(data.message);
-    this.#data = data;
+  constructor(data: string, statusCode: number);
+  constructor(data: ErrorData, statusCode: number);
+  constructor(data: string | ErrorData, statusCode: number) {
+    super(typeof data === "string" ? data : data.message);
     this.#statusCode = statusCode;
+    this.#data = data;
   }
 
   get statusCode() {
@@ -22,7 +24,7 @@ export class TxError extends Error {
   }
 
   get response() {
-    return this.#data;
+    return typeof this.#data === "string" ? { message: this.#data } : this.#data;
   }
 }
 

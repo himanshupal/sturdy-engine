@@ -68,6 +68,7 @@ export const uploadMedia = async (req: Request, res: Response) => {
       data: {
         title,
         description,
+        fileName: req.file.originalname,
         filePath: req.file.path,
         publicId: getRandomId(),
         size: req.file.size,
@@ -78,7 +79,7 @@ export const uploadMedia = async (req: Request, res: Response) => {
       },
     });
 
-    res.status(201).send(id);
+    res.status(201).json(id);
   } catch (err) {
     handleError("uploadMedia", res, err);
   }

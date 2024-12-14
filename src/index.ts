@@ -1,6 +1,6 @@
 import { path as ffmpegPath } from "@ffmpeg-installer/ffmpeg";
 import "dotenv/config";
-import express from "express";
+import express, { json } from "express";
 import ffmpeg from "fluent-ffmpeg";
 
 import { authenticate } from "./middlewares";
@@ -10,6 +10,12 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 
 const app = express();
 const port = process.env.PORT || "8000";
+
+app.use(
+  json({
+    limit: "2.5mb",
+  }),
+);
 
 // Simple health check for the server
 app.use("/ping", (_, res) => {
