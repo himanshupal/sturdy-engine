@@ -18,3 +18,12 @@ export const mergeMediaPayload = z
     videos: z.array(z.number().positive()),
   })
   .extend(commonVideoUploadParams);
+
+export const shareMediaPayload = z.object({
+  id: z.coerce.number(),
+  duration: z.number(),
+});
+
+export const getSharedMediaPayload = z.object({
+  publicId: z.string(),
+});

@@ -1,9 +1,8 @@
-import { fileUploadDir } from "@/constants";
 import ffmpeg, { type FfprobeFormat } from "fluent-ffmpeg";
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import { getRandomId } from ".";
+import { getRandomFilePath } from ".";
 
 export const getVideoMetadata = (filePath: string): Promise<FfprobeFormat> => {
   return new Promise((res, rej) => {
@@ -21,7 +20,7 @@ export const getVideoMetadata = (filePath: string): Promise<FfprobeFormat> => {
  */
 export const getVideoSize = async (filePath: string): Promise<number> => {
   const { size } = await getVideoMetadata(filePath);
-  if (!size) throw new Error("Failed to get video size ");
+  if (!size) throw new Error("Failed to get video size");
   return size;
 };
 
@@ -37,7 +36,7 @@ export const getVideoDuration = async (filePath: string): Promise<number> => {
 };
 
 export const trimVideo = async (filePath: string, from: number, duration: number): Promise<string> => {
-  const newFilePath = `${fileUploadDir}/${getRandomId(32)}${path.extname(filePath)}`;
+  const newFilePath = getRandomFilePath(filePath);
   return new Promise((res, rej) => {
     ffmpeg(filePath)
       .setStartTime(from)
@@ -49,7 +48,7 @@ export const trimVideo = async (filePath: string, from: number, duration: number
 };
 
 export const mergeVideos = async (files: Array<string>): Promise<string> => {
-  const newFilePath = `${fileUploadDir}/${getRandomId(32)}${path.extname(files.at(0)!)}`;
+  const newFilePath = getRandomFilePath(files.at(0)!);
 
   const inputList = path.join(path.dirname(newFilePath), "__tmp");
   await fs.writeFile(inputList, files.map((filePath) => `file '${filePath}'`).join("\n"));

@@ -27,7 +27,7 @@ export const trimMedia = async (req: Request, res: Response) => {
           message: "File not found",
           description: `No file exists with given id: ${id}`,
         },
-        400,
+        404,
       );
     }
 

@@ -1,7 +1,7 @@
 import path from "node:path";
 
 export const rootDir = path.resolve(__dirname, "..");
-export const fileUploadDir = `${rootDir}/public`;
+export const fileUploadDir = path.join(rootDir, "public");
 
 export const mediaSizeLimitInBytes = {
   min: 100 * 1000, // 100 KB

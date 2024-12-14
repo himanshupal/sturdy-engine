@@ -32,7 +32,7 @@ export const mergeMedia = async (req: Request, res: Response) => {
           message: "Video not found",
           description: `Not able to find video with id: ${notFound.join(", ")}`,
         },
-        400,
+        404,
       );
     }
 

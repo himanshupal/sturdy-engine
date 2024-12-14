@@ -2476,6 +2476,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dayjs@npm:^1.11.13":
+  version: 1.11.13
+  resolution: "dayjs@npm:1.11.13"
+  checksum: 10c0/a3caf6ac8363c7dade9d1ee797848ddcf25c1ace68d9fe8678ecf8ba0675825430de5d793672ec87b24a69bf04a1544b176547b2539982275d5542a7955f35b7
+  languageName: node
+  linkType: hard
+
 "debug@npm:2.6.9":
   version: 2.6.9
   resolution: "debug@npm:2.6.9"
@@ -5927,6 +5934,7 @@ __metadata:
     "@types/multer": "npm:^1"
     "@types/node": "npm:^22.10.2"
     "@types/supertest": "npm:^6.0.2"
+    dayjs: "npm:^1.11.13"
     dotenv: "npm:^16.4.7"
     eslint: "npm:^9.16.0"
     express: "npm:^4.21.2"
