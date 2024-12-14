@@ -19,7 +19,7 @@ model Video {
   duration Float
 
   // Random ID that'll be used for sharing video when enabled
-  publicId String
+  publicId String @unique
 
   // Data to be used for sharing purpose
   isShared  Boolean   @default(false)
