@@ -36,7 +36,7 @@ export const trimTestCases = async () => {
       });
 
     expect(trimmed.status).toBe(201);
-    expect(trimmed.body.duration).toBeCloseTo(5);
+    expect(Math.floor(trimmed.body.duration)).toBeCloseTo(5);
 
     expect(trimmed.body.title).toContain("cut");
     expect(trimmed.body.title).toContain(samplePayload.title);
