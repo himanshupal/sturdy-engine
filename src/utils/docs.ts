@@ -160,7 +160,7 @@ export const getJSONSpec = (fields: JSONSpecFields) => ({
                   description: { type: "string", description: "Optional details of what going on" },
                   videos: {
                     type: "array",
-                    items: { type: "number", example: [2, 5] },
+                    items: { type: "number", example: 2 },
                     description: "List of ids of the videos to be merged together",
                   },
                 },
