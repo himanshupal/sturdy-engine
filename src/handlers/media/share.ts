@@ -7,7 +7,7 @@ import fs from "node:fs";
 
 export const shareMedia = async (req: Request, res: Response) => {
   try {
-    const { id, duration } = await shareMediaPayload.parseAsync(req.body);
+    const { id, duration, expireAt } = await shareMediaPayload.parseAsync(req.body);
 
     const prisma = getPrismaClient();
 
@@ -28,11 +28,13 @@ export const shareMedia = async (req: Request, res: Response) => {
       );
     }
 
+    const shareDuration = duration || dayjs(expireAt).diff(dayjs(), "seconds");
+
     const { publicId } = await prisma.video.update({
       where: { id },
       data: {
         isShared: true,
-        sharedFor: duration,
+        sharedFor: shareDuration,
         sharedAt: new Date(),
       },
       select: {
@@ -40,7 +42,10 @@ export const shareMedia = async (req: Request, res: Response) => {
       },
     });
 
-    res.send(publicId);
+    res.json({
+      url: `/api/v1/media/${publicId}`,
+      expireAt: expireAt || dayjs().add(shareDuration, "seconds").toJSON(),
+    });
   } catch (err) {
     handleError("shareMedia", res, err);
   }
@@ -78,8 +83,9 @@ export const getSharedMedia = async (req: Request, res: Response) => {
       throw new TxError("File is not being shared", 403);
     }
 
-    if (dayjs().isAfter(dayjs(file.sharedAt!).add(file.sharedFor!, "seconds"))) {
+    if (dayjs(file.sharedAt!).add(file.sharedFor!, "seconds").isBefore()) {
       await prisma.video.update({
+        select: { id: true },
         where: { publicId },
         data: {
           isShared: false,
@@ -97,7 +103,12 @@ export const getSharedMedia = async (req: Request, res: Response) => {
 
     res.setHeader("Content-Type", "video/mp4");
     res.setHeader("Content-Length", file.size);
-    fs.createReadStream(file.filePath).pipe(res);
+    fs.createReadStream(file.filePath)
+      .pipe(res)
+      .on("error", (err) => {
+        console.error("getShareMedia: reading file while sharing:", err);
+        throw new TxError("Failed to read file", 500);
+      });
   } catch (err) {
     handleError("shareMedia", res, err);
   }

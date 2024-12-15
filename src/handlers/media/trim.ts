@@ -1,8 +1,8 @@
 import { getPrismaClient } from "@/database";
 import { trimMediaPayload } from "@/payloads";
-import { getRandomId } from "@/utils";
+import { getRandomString } from "@/utils";
 import { TxError, handleError } from "@/utils/error";
-import { getVideoSize, trimVideo } from "@/utils/media";
+import { getVideoMetadata, trimVideo } from "@/utils/media";
 import type { Request, Response } from "express";
 
 export const trimMedia = async (req: Request, res: Response) => {
@@ -48,23 +48,28 @@ export const trimMedia = async (req: Request, res: Response) => {
     }
 
     const newFilePath = await trimVideo(file.filePath, startAt, duration);
-    const size = await getVideoSize(newFilePath);
+    const { size } = await getVideoMetadata(newFilePath);
 
-    const { id: newId } = await prisma.video.create({
+    const newFile = await prisma.video.create({
       data: {
-        title: `cut_${getRandomId(3)}_${file.title}`,
+        title: `cut_${getRandomString(3)}_${file.title}`,
         fileName: file.fileName,
-        publicId: getRandomId(),
+        publicId: getRandomString(),
         filePath: newFilePath,
         duration,
         size,
       },
       select: {
         id: true,
+        size: true,
+        title: true,
+        description: true,
+        duration: true,
+        fileName: true,
       },
     });
 
-    res.status(201).json(newId);
+    res.status(201).json(newFile);
   } catch (err) {
     handleError("trimMedia", res, err);
   }

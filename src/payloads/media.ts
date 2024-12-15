@@ -1,4 +1,7 @@
+import dayjs from "dayjs";
 import z from "zod";
+
+import { payloadWithId } from "./common";
 
 const commonVideoUploadParams = {
   title: z.string(),
@@ -7,11 +10,12 @@ const commonVideoUploadParams = {
 
 export const uploadMediaPayload = z.object(commonVideoUploadParams);
 
-export const trimMediaPayload = z.object({
-  id: z.number().positive(),
-  startAt: z.number().gte(0),
-  endAt: z.number().positive(),
-});
+export const trimMediaPayload = z
+  .object({
+    startAt: z.coerce.number().gte(0),
+    endAt: z.coerce.number().positive(),
+  })
+  .extend(payloadWithId);
 
 export const mergeMediaPayload = z
   .object({
@@ -19,11 +23,18 @@ export const mergeMediaPayload = z
   })
   .extend(commonVideoUploadParams);
 
-export const shareMediaPayload = z.object({
-  id: z.coerce.number(),
-  duration: z.number(),
-});
+export const shareMediaPayload = z
+  .object({
+    duration: z.coerce.number().positive().optional(),
+    expireAt: z.string().datetime().optional(),
+  })
+  .extend(payloadWithId)
+  .refine(({ expireAt }) => !expireAt || dayjs(expireAt).isAfter(), "`expireAt` must be in future")
+  .refine(
+    ({ duration, expireAt }) => (duration || expireAt) && !(duration && expireAt),
+    "Provide either `duration` or `expireAt`",
+  );
 
 export const getSharedMediaPayload = z.object({
-  publicId: z.string(),
+  publicId: z.string().length(12),
 });

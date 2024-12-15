@@ -2,6 +2,8 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import type { Response } from "express";
 import { ZodError } from "zod";
 
+import { dataIsString } from ".";
+
 type ErrorData = {
   message: string;
   description: string;
@@ -14,7 +16,7 @@ export class TxError extends Error {
   constructor(data: string, statusCode: number);
   constructor(data: ErrorData, statusCode: number);
   constructor(data: string | ErrorData, statusCode: number) {
-    super(typeof data === "string" ? data : data.message);
+    super(dataIsString(data) ? data : data.message);
     this.#statusCode = statusCode;
     this.#data = data;
   }
@@ -24,14 +26,17 @@ export class TxError extends Error {
   }
 
   get response() {
-    return typeof this.#data === "string" ? { message: this.#data } : this.#data;
+    return dataIsString(this.#data) ? { message: this.#data } : this.#data;
   }
 }
 
 export const handleError = (identifier: string, res: Response, err: unknown) => {
   if (err instanceof ZodError) {
     console.error(`${identifier}:ZodError:`, err.flatten());
-    return res.status(422).send(err.issues);
+    return res.status(422).json({
+      message: "Please check the data provided",
+      description: err.issues,
+    });
   }
 
   if (err instanceof PrismaClientKnownRequestError) {

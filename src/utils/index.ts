@@ -2,8 +2,14 @@ import { fileUploadDir } from "@/constants";
 import { init } from "@paralleldrive/cuid2";
 import path from "node:path";
 
-export const getRandomId = (length = 12) => init({ length })();
+export const getRandomString = (length = 12) => init({ length })();
 
-export const getRandomFilePath = (sampleFileType: string) => {
-  return path.join(fileUploadDir, `${getRandomId(32)}${path.extname(sampleFileType)}`);
+export const dataIsString = (data: unknown): data is string => typeof data === "string";
+
+export const getRandomFileNameWithExtension = (sampleFile: string) => {
+  return `${getRandomString(32)}${path.extname(sampleFile)}`;
+};
+
+export const getRandomFilePath = (sampleFile: string) => {
+  return path.join(fileUploadDir, getRandomFileNameWithExtension(sampleFile));
 };

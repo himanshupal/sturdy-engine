@@ -1,9 +1,8 @@
-import { mediaDurationLimitInSeconds, mediaSizeLimitInBytes } from "@/constants";
 import { getPrismaClient } from "@/database";
 import { uploadMediaPayload } from "@/payloads";
-import { getRandomId } from "@/utils";
+import { getRandomString } from "@/utils";
 import { TxError, handleError } from "@/utils/error";
-import { getVideoDuration } from "@/utils/media";
+import { validateFileReturningMetadata } from "@/utils/media";
 import type { Request, Response } from "express";
 
 export const uploadMedia = async (req: Request, res: Response) => {
@@ -20,66 +19,31 @@ export const uploadMedia = async (req: Request, res: Response) => {
       );
     }
 
-    if (req.file.size < mediaSizeLimitInBytes.min) {
-      throw new TxError(
-        {
-          message: "Provided file is too small",
-          description: `File size must be between ${mediaSizeLimitInBytes.min / 1000 / 1000} and ${mediaSizeLimitInBytes.max / 1000 / 1000} MB`,
-        },
-        400,
-      );
-    }
-
-    if (req.file.size > mediaSizeLimitInBytes.max) {
-      throw new TxError(
-        {
-          message: "Provided file is too large",
-          description: `File size must be between ${mediaSizeLimitInBytes.min / 1000 / 1000} and ${mediaSizeLimitInBytes.max / 1000 / 1000} MB`,
-        },
-        400,
-      );
-    }
-
-    const duration = await getVideoDuration(req.file.path);
-
-    if (duration < mediaDurationLimitInSeconds.min) {
-      throw new TxError(
-        {
-          message: "Video is too short",
-          description: `Video duration must be between ${mediaDurationLimitInSeconds.min} and ${mediaDurationLimitInSeconds.max} seconds`,
-        },
-        400,
-      );
-    }
-
-    if (duration > mediaDurationLimitInSeconds.max) {
-      throw new TxError(
-        {
-          message: "Video is too long",
-          description: `Video duration must be between ${mediaDurationLimitInSeconds.min} and ${mediaDurationLimitInSeconds.max} seconds`,
-        },
-        400,
-      );
-    }
+    const { duration } = await validateFileReturningMetadata(req.file);
 
     const prisma = getPrismaClient();
 
-    const { id } = await prisma.video.create({
+    const newFile = await prisma.video.create({
       data: {
         title,
         description,
         fileName: req.file.originalname,
         filePath: req.file.path,
-        publicId: getRandomId(),
+        publicId: getRandomString(),
         size: req.file.size,
         duration,
       },
       select: {
         id: true,
+        size: true,
+        title: true,
+        description: true,
+        duration: true,
+        fileName: true,
       },
     });
 
-    res.status(201).json(id);
+    res.status(201).json(newFile);
   } catch (err) {
     handleError("uploadMedia", res, err);
   }

@@ -1,14 +1,13 @@
 import { fileUploadDir } from "@/constants";
-import { getRandomId } from "@/utils";
+import { getRandomFileNameWithExtension } from "@/utils";
 import multer, { diskStorage } from "multer";
 import fs from "node:fs";
-import path from "node:path";
 
 /**
  * Middleware to accept file via POST requests
  * @param fieldName Name of the field which will have the file
  */
-export const handleMediaUpload = (fieldName: string) => {
+export const handleSingleFileUpload = (fieldName: string) => {
   return multer({
     storage: diskStorage({
       destination(_req, _file, callback) {
@@ -16,7 +15,7 @@ export const handleMediaUpload = (fieldName: string) => {
         callback(null, fileUploadDir);
       },
       filename(_req, { originalname }, callback) {
-        callback(null, `${getRandomId(32)}${path.extname(originalname)}`);
+        callback(null, getRandomFileNameWithExtension(originalname));
       },
     }),
     fileFilter(_req, file, callback) {

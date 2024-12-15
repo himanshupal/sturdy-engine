@@ -1,10 +1,10 @@
 import { getSharedMedia, mergeMedia, shareMedia, trimMedia, uploadMedia } from "@/handlers";
-import { handleMediaUpload } from "@/middlewares";
+import { handleSingleFileUpload } from "@/middlewares";
 import { Router } from "express";
 
 const router = Router();
 
-router.post("/upload", handleMediaUpload("media"), uploadMedia);
+router.post("/upload", handleSingleFileUpload("media"), uploadMedia);
 router.post("/merge", mergeMedia);
 router.post("/trim", trimMedia);
 

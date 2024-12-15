@@ -1,14 +1,24 @@
 import { getPrismaClient } from "@/database";
 import { mergeMediaPayload } from "@/payloads";
-import { getRandomId } from "@/utils";
+import { getRandomString } from "@/utils";
 import { TxError, handleError } from "@/utils/error";
-import { getVideoDuration, getVideoSize, mergeVideos } from "@/utils/media";
+import { getVideoMetadata, mergeVideos } from "@/utils/media";
 import type { Request, Response } from "express";
 import path from "node:path";
 
 export const mergeMedia = async (req: Request, res: Response) => {
   try {
     const { title, description, videos } = await mergeMediaPayload.parseAsync(req.body);
+
+    if (videos.length < 2) {
+      throw new TxError(
+        {
+          message: "Insufficient data",
+          description: "Merge requires at least 2 videos",
+        },
+        400,
+      );
+    }
 
     const prisma = getPrismaClient();
 
@@ -37,23 +47,29 @@ export const mergeMedia = async (req: Request, res: Response) => {
     }
 
     const newFilePath = await mergeVideos(lookupResult.map((x) => x!.filePath));
+    const { size, duration } = await getVideoMetadata(newFilePath);
 
-    const duration = await getVideoDuration(newFilePath);
-    const size = await getVideoSize(newFilePath);
-
-    const { id } = await prisma.video.create({
+    const newFile = await prisma.video.create({
       data: {
         title,
         description,
         duration,
         size,
         filePath: newFilePath,
-        publicId: getRandomId(),
-        fileName: `Merge_${getRandomId(3)}${path.extname(newFilePath)}`,
+        publicId: getRandomString(),
+        fileName: `Merge_${getRandomString(3)}${path.extname(newFilePath)}`,
+      },
+      select: {
+        id: true,
+        size: true,
+        title: true,
+        description: true,
+        duration: true,
+        fileName: true,
       },
     });
 
-    res.status(201).json(id);
+    res.status(201).json(newFile);
   } catch (err) {
     handleError("mergeMedia", res, err);
   }
