@@ -203,6 +203,11 @@ export const getJSONSpec = (fields: JSONSpecFields) => ({
             description: "ID of the video to be fetched",
             required: true,
           },
+          {
+            in: "query",
+            name: "download",
+            description: "Put anything here to download the file",
+          },
         ],
         responses: {
           200: {

@@ -1,5 +1,5 @@
 import { getPrismaClient } from "@/database";
-import { getSharedMediaPayload, shareMediaPayload } from "@/payloads";
+import { getShareMediaQueryPayload, getSharedMediaPayload, shareMediaPayload } from "@/payloads";
 import { TxError, handleError } from "@/utils/error";
 import dayjs from "dayjs";
 import type { Request, Response } from "express";
@@ -54,6 +54,7 @@ export const shareMedia = async (req: Request, res: Response) => {
 export const getSharedMedia = async (req: Request, res: Response) => {
   try {
     const { publicId } = await getSharedMediaPayload.parseAsync(req.params);
+    const { download } = await getShareMediaQueryPayload.parseAsync(req.query);
 
     const prisma = getPrismaClient();
 
@@ -101,6 +102,7 @@ export const getSharedMedia = async (req: Request, res: Response) => {
       );
     }
 
+    res.setHeader("Content-Disposition", download ? "attachment" : "inline");
     res.setHeader("Content-Type", "video/webm");
     res.setHeader("Content-Length", file.size);
     fs.createReadStream(file.filePath)

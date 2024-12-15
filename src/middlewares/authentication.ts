@@ -18,12 +18,12 @@ export const isAuthTokenValid = (token: string): boolean => {
  */
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   if (!req.headers.authorization) {
-    res.sendStatus(400);
+    res.sendStatus(401);
     return;
   }
 
   if (!isAuthTokenValid(req.headers.authorization)) {
-    res.sendStatus(401);
+    res.sendStatus(400);
     return;
   }
 

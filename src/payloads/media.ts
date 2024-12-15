@@ -41,3 +41,7 @@ export const shareMediaPayload = z
 export const getSharedMediaPayload = z.object({
   publicId: z.string(),
 });
+
+export const getShareMediaQueryPayload = z.object({
+  download: z.string().optional(),
+});
