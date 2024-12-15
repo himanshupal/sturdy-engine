@@ -73,31 +73,10 @@ export const getJSONSpec = (fields: JSONSpecFields) => ({
   },
   servers: [{ url: fields.host }],
   tags: [
-    { name: "health", description: "Health check" },
     { name: "video", description: "Upload or modify a video" },
     { name: "share", description: "Share a video with the world out there" },
   ],
   paths: {
-    "/ping": {
-      get: {
-        tags: ["health"],
-        summary: "Ping to see if server is operational",
-        responses: {
-          200: {
-            description: "OK",
-            content: {
-              "text/html": {
-                schema: {
-                  type: "string",
-                  example: "pong",
-                },
-              },
-            },
-          },
-          500: { description: "Server error" },
-        },
-      },
-    },
     "/media/upload": {
       post: {
         tags: ["video"],

@@ -34,8 +34,8 @@ app.use(
 );
 
 // Simple health check for the server
-app.get(`${namespace}/ping`, (_, res) => {
-  res.setHeader("Content-Type", "text/plain").send("pong");
+app.get("/ping", (_, res) => {
+  res.send("pong");
 });
 
 app.use(namespace, authenticate, routes);

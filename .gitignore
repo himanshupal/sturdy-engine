@@ -15,7 +15,8 @@
 # .pnp.*
 node_modules
 
-# Generated output
+# Generated files
+coverage
 build
 
 # Media files
