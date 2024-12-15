@@ -1,5 +1,6 @@
 import { rootDir } from "@/constants";
 import app from "@/index";
+import { deleteDatabaseEntryAndFile } from "@/utils/database";
 import path from "node:path";
 import request from "supertest";
 
@@ -77,5 +78,8 @@ export const mergeTestCases = async () => {
     expect(response.status).toBe(201);
     expect(response.body.fileName).toContain("Merge");
     expect(response.body.title).toEqual(samplePayload.title);
+
+    await deleteDatabaseEntryAndFile(response.body.id);
+    await Promise.all(files.map((id) => deleteDatabaseEntryAndFile(id)));
   }
 };

@@ -1,6 +1,7 @@
 import { rootDir } from "@/constants";
 import app from "@/index";
 import { sleep } from "@/utils";
+import { deleteDatabaseEntryAndFile } from "@/utils/database";
 import dayjs from "dayjs";
 import path from "node:path";
 import request from "supertest";
@@ -113,4 +114,6 @@ export const shareTestCases = async () => {
 
   await shareAndVerify({ id: response.body.id, duration: 5 });
   await shareAndVerify({ id: response.body.id, expireAt: dayjs().add(5, "seconds").toJSON() });
+
+  await deleteDatabaseEntryAndFile(response.body.id);
 };

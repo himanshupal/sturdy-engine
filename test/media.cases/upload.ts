@@ -1,5 +1,6 @@
 import { rootDir } from "@/constants";
 import app from "@/index";
+import { deleteDatabaseEntryAndFile } from "@/utils/database";
 import path from "node:path";
 import request from "supertest";
 
@@ -33,6 +34,8 @@ export const uploadTestCases = async () => {
     expect(response.status).toBe(201);
     expect(response.body.title).toEqual(samplePayload.title);
     expect(response.body.description).toEqual(samplePayload.description);
+
+    await deleteDatabaseEntryAndFile(response.body.id);
   }
 
   {

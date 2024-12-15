@@ -1,5 +1,6 @@
 import { rootDir } from "@/constants";
 import app from "@/index";
+import { deleteDatabaseEntryAndFile } from "@/utils/database";
 import path from "node:path";
 import request from "supertest";
 
@@ -39,6 +40,8 @@ export const trimTestCases = async () => {
 
     expect(trimmed.body.title).toContain("cut");
     expect(trimmed.body.title).toContain(samplePayload.title);
+
+    await deleteDatabaseEntryAndFile(trimmed.body.id);
   }
 
   {
@@ -128,4 +131,6 @@ export const trimTestCases = async () => {
     expect(trimmed.status).toBe(400);
     expect(trimmed.body.message).toEqual("Invalid end duration");
   }
+
+  await deleteDatabaseEntryAndFile(response.body.id);
 };
