@@ -39,5 +39,5 @@ export const shareMediaPayload = z
   );
 
 export const getSharedMediaPayload = z.object({
-  publicId: z.string().length(12),
+  publicId: z.string(),
 });
