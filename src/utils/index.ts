@@ -13,3 +13,7 @@ export const getRandomFileNameWithExtension = (sampleFile: string) => {
 export const getRandomFilePath = (sampleFile: string) => {
   return path.join(fileUploadDir, getRandomFileNameWithExtension(sampleFile));
 };
+
+export const sleep = (seconds: number, reject?: true): Promise<void> => {
+  return new Promise((res, rej) => setTimeout(reject ? rej : res, seconds * 1000));
+};

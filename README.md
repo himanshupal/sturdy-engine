@@ -1,5 +1,7 @@
 # Sturdy Engine
 
+[![this product is ai free](https://this-product-is-ai-free.github.io/badge.svg)](https://this-product-is-ai-free.github.io)
+
 Express powered server that allows video manipulation via REST API, all features are listed below:
 
 - Allow users to upload videos with configurable limits of size and duration
@@ -74,6 +76,8 @@ There is only one model/table as of now, i.e. `videos` table, structure for whic
 
 - Use `yarn test` command to start testing
 - Use `yarn test --coverage` command to generate the coverage report
+
+> Use `--silent` flag to hide errors being thrown for debugging purpose
 
 ## References
 

@@ -76,7 +76,7 @@ export const getSharedMedia = async (req: Request, res: Response) => {
           message: "Not found",
           description: "Video you are trying to share could not be found",
         },
-        400,
+        404,
       );
     }
 
