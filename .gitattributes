@@ -4,3 +4,4 @@
 /.pnp.*              binary linguist-generated
 
 /prisma/local.db     binary
+/samples             binary
