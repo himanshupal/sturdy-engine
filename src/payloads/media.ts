@@ -1,3 +1,4 @@
+import { isValidVideoTimestamp } from "@/utils/media";
 import dayjs from "dayjs";
 import z from "zod";
 
@@ -12,10 +13,12 @@ export const uploadMediaPayload = z.object(commonVideoUploadParams);
 
 export const trimMediaPayload = z
   .object({
-    startAt: z.coerce.number().gte(0),
-    endAt: z.coerce.number().positive(),
+    startAt: z.string(),
+    endAt: z.string(),
   })
-  .extend(payloadWithId);
+  .extend(payloadWithId)
+  .refine(({ startAt }) => isValidVideoTimestamp(startAt), "Start time is not valid")
+  .refine(({ endAt }) => isValidVideoTimestamp(endAt), "End time is not valid");
 
 export const mergeMediaPayload = z
   .object({

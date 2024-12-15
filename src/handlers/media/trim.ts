@@ -2,12 +2,25 @@ import { getPrismaClient } from "@/database";
 import { trimMediaPayload } from "@/payloads";
 import { getRandomString } from "@/utils";
 import { TxError, handleError } from "@/utils/error";
-import { getVideoMetadata, trimVideo } from "@/utils/media";
+import { getTimestampInSeconds, getVideoMetadata, trimVideo } from "@/utils/media";
 import type { Request, Response } from "express";
 
 export const trimMedia = async (req: Request, res: Response) => {
   try {
     const { id, startAt, endAt } = await trimMediaPayload.parseAsync(req.body);
+
+    const startAtDuration = getTimestampInSeconds(startAt);
+    const endAtDuration = getTimestampInSeconds(endAt);
+
+    if (startAtDuration > endAtDuration) {
+      throw new TxError(
+        {
+          message: "Invalid timestamp provided",
+          description: "End time must be after start time",
+        },
+        400,
+      );
+    }
 
     const prisma = getPrismaClient();
 
@@ -31,7 +44,7 @@ export const trimMedia = async (req: Request, res: Response) => {
       );
     }
 
-    if (file.duration < endAt) {
+    if (file.duration < endAtDuration) {
       throw new TxError(
         {
           message: "Invalid end duration",
@@ -41,14 +54,14 @@ export const trimMedia = async (req: Request, res: Response) => {
       );
     }
 
-    const duration = endAt - startAt;
+    const trimDuration = endAtDuration - startAtDuration;
 
-    if (duration === file.duration) {
+    if (trimDuration === file.duration) {
       throw new TxError("No trimming required", 202);
     }
 
-    const newFilePath = await trimVideo(file.filePath, startAt, duration);
-    const { size } = await getVideoMetadata(newFilePath);
+    const newFilePath = await trimVideo(file.filePath, startAtDuration, trimDuration);
+    const { size, duration } = await getVideoMetadata(newFilePath);
 
     const newFile = await prisma.video.create({
       data: {

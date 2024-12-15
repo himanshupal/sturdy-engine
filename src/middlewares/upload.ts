@@ -1,4 +1,4 @@
-import { fileUploadDir } from "@/constants";
+import { acceptedVideoTypesRegex, fileUploadDir } from "@/constants";
 import { getRandomFileNameWithExtension } from "@/utils";
 import multer, { diskStorage } from "multer";
 import fs from "node:fs";
@@ -19,8 +19,7 @@ export const handleSingleFileUpload = (fieldName: string) => {
       },
     }),
     fileFilter(_req, file, callback) {
-      const fileTypesRegex = /(.mp4|.avi|.mkv|.mov)$/i;
-      return callback(null, fileTypesRegex.test(file.mimetype));
+      return callback(null, acceptedVideoTypesRegex.test(file.mimetype));
     },
   }).single(fieldName);
 };

@@ -1,10 +1,28 @@
-import { mediaDurationLimitInSeconds, mediaSizeLimitInBytes } from "@/constants";
+import { mediaDurationLimitInSeconds, mediaSizeLimitInBytes, validSeekTimeStampRegex } from "@/constants";
 import ffmpeg, { type FfprobeFormat } from "fluent-ffmpeg";
 import fs from "node:fs/promises";
 import path from "node:path";
 
 import { getRandomFilePath } from ".";
 import { TxError } from "./error";
+
+/**
+ * Checks whether the provided timestamp for video is valid
+ * @param value A numeric value of seconds or duration in "HH:MM:SS.XXX" format
+ */
+export const isValidVideoTimestamp = (value: string | number): boolean => {
+  if (typeof value === "number") return true;
+  return !Number.isNaN(+value) || !!validSeekTimeStampRegex.exec(value);
+};
+
+export const getTimestampInSeconds = (value: string | number): number => {
+  if (typeof value === "number") return value;
+  if (!Number.isNaN(+value)) return +value;
+  return value
+    .split(":")
+    .toReversed()
+    .reduce((p, c, i) => p + Math.pow(60, i) * +c, 0);
+};
 
 /**
  * Get metadata for the video at the path provided
