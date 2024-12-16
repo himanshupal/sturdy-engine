@@ -1,0 +1,198 @@
+{
+	"info": {
+		"_postman_id": "da2bc5f4-02d2-4195-882b-1361563ea702",
+		"name": "Sturdy Engine",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29425969"
+	},
+	"item": [
+		{
+			"name": "Upload Video",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Title for the Video",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "A long description for the video",
+							"type": "text"
+						},
+						{
+							"key": "media",
+							"type": "file",
+							"src": "/Users/himanshupal/Pictures/interstellar.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/media/upload",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Trim Video",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 20,\n    \"startAt\": \"5\",\n    \"endAt\": \"07:15.123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/media/trim",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media",
+						"trim"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Merge Videos",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Merge 0\",\n    \"description\": \"This should merge the videos\",\n    \"videos\": [\n        11,\n        20\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/media/merge",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media",
+						"merge"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Shared Video",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/media/{{identifier}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media",
+						"{{identifier}}"
+					],
+					"query": [
+						{
+							"key": "download",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Share Video",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 34,\n    \"duration\": 60\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/media/share",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"media",
+						"share"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "xq7b86rt8q7otzr80br",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "identifier",
+			"value": "xj07abab6r3v",
+			"type": "default"
+		},
+		{
+			"key": "url",
+			"value": "http://localhost:8000/api/v1",
+			"type": "string"
+		}
+	]
+}
